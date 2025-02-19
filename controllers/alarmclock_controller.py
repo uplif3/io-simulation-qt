@@ -2,10 +2,17 @@
 from PySide6.QtCore import QObject
 
 class AlarmclockViewController(QObject):
+    """
+    Entspricht dem Java-AlarmclockViewController:
+    - Hält Model und View
+    - handleIncomingData(...) -> setHexString(...)
+    - updateView() -> überträgt Modelwerte an View
+    """
     def __init__(self, view, model, parent=None):
         super().__init__(parent)
         self.view = view
         self.model = model
+        # Gleich beim Start einmal View aktualisieren
         self.updateView()
 
     def setHexString(self, hexStr: str):
@@ -16,6 +23,7 @@ class AlarmclockViewController(QObject):
         self.setHexString(data)
 
     def updateView(self):
+        # 1:1 wie im Java-Code
         self.view.hoursTens.setDigit(self.model.hoursTens)
         self.view.hoursOnes.setDigit(self.model.hoursOnes)
         self.view.minutesTens.setDigit(self.model.minutesTens)

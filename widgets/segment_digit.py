@@ -1,68 +1,69 @@
 # widgets/segment_digit.py
 from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QPainter, QBrush, QPen, QColor
-from PySide6.QtCore import Qt, Property
+from PySide6.QtGui import QPainter, QColor
+from PySide6.QtCore import Qt
 
 class SegmentDigit(QWidget):
+    """
+    Entspricht deinem JavaFX SegmentDigit:
+    - Hat eine 'digit'-Property (String).
+    - Beim Setzen wird 'updateSegments(digit)' aufgerufen.
+    - Jedes Segment wird als Rechteck oder gezeichnetes Element realisiert.
+    Hier machen wir es minimal, du kannst es beliebig ausbauen.
+    """
     def __init__(self, parent=None):
         super().__init__(parent)
         self._digit = "0"
-        self.setFixedSize(60, 100)
-
-    def getDigit(self):
-        return self._digit
+        self.setFixedSize(60, 100)  # Entspricht dem Java-FXML: prefWidth="60", prefHeight="100"
 
     def setDigit(self, value: str):
         self._digit = value
         self.update()
 
-    digit = Property(str, getDigit, setDigit)
+    def getDigit(self):
+        return self._digit
+
+    digit = property(getDigit, setDigit)
 
     def paintEvent(self, event):
+        """
+        Minimalbeispiel: Wir zeichnen 7 Rechtecke.
+        Basierend auf self._digit schalten wir die Segmente an/aus.
+        """
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        # Farben für an/aus
-        colorOn = QColor("dimgray")
-        colorOff = QColor("lightgray")
-        
-        # Bestimme, welche Segmente an sind (A, B, C, D, E, F, G)
-        segments = {
-            "A": False, "B": False, "C": False, "D": False,
-            "E": False, "F": False, "G": False
-        }
+        # Segment-Logik
+        segAOn = segBOn = segCOn = segDOn = segEOn = segFOn = segGOn = False
         d = self._digit
-        if d == "0": segments = {"A":True, "B":True, "C":True, "D":True, "E":True, "F":True, "G":False}
-        elif d == "1": segments = {"A":False, "B":True, "C":True, "D":False, "E":False, "F":False, "G":False}
-        elif d == "2": segments = {"A":True, "B":True, "C":False, "D":True, "E":True, "F":False, "G":True}
-        elif d == "3": segments = {"A":True, "B":True, "C":True, "D":True, "E":False, "F":False, "G":True}
-        elif d == "4": segments = {"A":False, "B":True, "C":True, "D":False, "E":False, "F":True, "G":True}
-        elif d == "5": segments = {"A":True, "B":False, "C":True, "D":True, "E":False, "F":True, "G":True}
-        elif d == "6": segments = {"A":True, "B":False, "C":True, "D":True, "E":True, "F":True, "G":True}
-        elif d == "7": segments = {"A":True, "B":True, "C":True, "D":False, "E":False, "F":False, "G":False}
-        elif d == "8": segments = {"A":True, "B":True, "C":True, "D":True, "E":True, "F":True, "G":True}
-        elif d == "9": segments = {"A":True, "B":True, "C":True, "D":True, "E":False, "F":True, "G":True}
 
-        # Zeichne die Segmente als Rechtecke:
-        w, h = self.width(), self.height()
-        margin = 5
-        thickness = 8
-        painter.setPen(Qt.NoPen)
-        def drawSeg(segOn, x, y, width, height):
-            painter.setBrush(QBrush(colorOn if segOn else colorOff))
-            painter.drawRect(x, y, width, height)
+        if   d == "0": segAOn=segBOn=segCOn=segDOn=segEOn=segFOn=True
+        elif d == "1": segBOn=segCOn=True
+        elif d == "2": segAOn=segBOn=segDOn=segEOn=segGOn=True
+        elif d == "3": segAOn=segBOn=segCOn=segDOn=segGOn=True
+        elif d == "4": segBOn=segCOn=segFOn=segGOn=True
+        elif d == "5": segAOn=segCOn=segDOn=segFOn=segGOn=True
+        elif d == "6": segAOn=segCOn=segDOn=segEOn=segFOn=segGOn=True
+        elif d == "7": segAOn=segBOn=segCOn=True
+        elif d == "8": segAOn=segBOn=segCOn=segDOn=segEOn=segFOn=segGOn=True
+        elif d == "9": segAOn=segBOn=segCOn=segDOn=segFOn=segGOn=True
 
-        # Segment A (oben)
-        drawSeg(segments["A"], margin, 0, w - 2*margin, thickness)
-        # Segment D (unten)
-        drawSeg(segments["D"], margin, h - thickness, w - 2*margin, thickness)
-        # Segment G (Mitte)
-        drawSeg(segments["G"], margin, (h-thickness)/2, w - 2*margin, thickness)
-        # Segment F (oben links)
-        drawSeg(segments["F"], 0, margin, thickness, (h - 3*margin) / 2)
-        # Segment E (unten links)
-        drawSeg(segments["E"], 0, (h+margin)/2, thickness, (h - 3*margin) / 2)
-        # Segment B (oben rechts)
-        drawSeg(segments["B"], w - thickness, margin, thickness, (h - 3*margin) / 2)
-        # Segment C (unten rechts)
-        drawSeg(segments["C"], w - thickness, (h+margin)/2, thickness, (h - 3*margin) / 2)
+        # Farben
+        colorOn = QColor("red") 
+        colorOff = QColor("gray")
+
+        # Koordinaten an Java-FXML anlehnen:
+        # A = oben
+        painter.fillRect(5, 0, 50, 8, colorOn if segAOn else colorOff)
+        # B = oben rechts
+        painter.fillRect(55, 8, 8, 40, colorOn if segBOn else colorOff)
+        # C = unten rechts
+        painter.fillRect(55, 52, 8, 40, colorOn if segCOn else colorOff)
+        # D = unten
+        painter.fillRect(5, 92, 50, 8, colorOn if segDOn else colorOff)
+        # E = unten links
+        painter.fillRect(0, 52, 8, 40, colorOn if segEOn else colorOff)
+        # F = oben links
+        painter.fillRect(0, 8, 8, 40, colorOn if segFOn else colorOff)
+        # G = Mitte
+        painter.fillRect(5, 46, 50, 8, colorOn if segGOn else colorOff)

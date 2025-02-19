@@ -5,20 +5,28 @@ from widgets.segment_digit import SegmentDigit
 from widgets.segment_colon import SegmentColon
 
 class AlarmclockView(QWidget):
+    """
+    Entspricht dem Java-FXML:
+    <VBox spacing="10" alignment="CENTER">
+      <Label text="Alarm Clock"/>
+      <HBox> [SegmentDigit, SegmentDigit, SegmentColon, SegmentDigit, SegmentDigit] </HBox>
+      <HBox> [alarmLabel, beepLabel] </HBox>
+    </VBox>
+    """
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi()
 
     def setupUi(self):
-        vbox = QVBoxLayout(self)
-        vbox.setAlignment(Qt.AlignCenter)
-        vbox.setSpacing(10)
+        mainLayout = QVBoxLayout(self)
+        mainLayout.setAlignment(Qt.AlignCenter)
+        mainLayout.setSpacing(10)
 
         title = QLabel("Alarm Clock", self)
         title.setStyleSheet("font-size: 24px; font-weight: bold;")
-        vbox.addWidget(title)
+        mainLayout.addWidget(title)
 
-        # Ziffernzeile (Stunden und Minuten)
+        # Digit-Zeile
         hboxDigits = QHBoxLayout()
         hboxDigits.setAlignment(Qt.AlignCenter)
         hboxDigits.setSpacing(10)
@@ -32,9 +40,9 @@ class AlarmclockView(QWidget):
         hboxDigits.addWidget(self.colon)
         hboxDigits.addWidget(self.minutesTens)
         hboxDigits.addWidget(self.minutesOnes)
-        vbox.addLayout(hboxDigits)
+        mainLayout.addLayout(hboxDigits)
 
-        # Statuszeile
+        # Status-Zeile
         hboxStatus = QHBoxLayout()
         hboxStatus.setAlignment(Qt.AlignCenter)
         hboxStatus.setSpacing(20)
@@ -44,6 +52,6 @@ class AlarmclockView(QWidget):
         self.beepLabel.setStyleSheet("color: orange; font-weight: bold;")
         hboxStatus.addWidget(self.alarmLabel)
         hboxStatus.addWidget(self.beepLabel)
-        vbox.addLayout(hboxStatus)
+        mainLayout.addLayout(hboxStatus)
 
-        self.setLayout(vbox)
+        self.setLayout(mainLayout)

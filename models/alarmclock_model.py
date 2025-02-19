@@ -1,5 +1,10 @@
 # models/alarmclock_model.py
+
 class AlarmclockModel:
+    """
+    Entspricht deinem Java-AlarmclockModel. 
+    Kein Signals/Slots – sondern reine Properties und 'setHexString(...)'.
+    """
     def __init__(self):
         self.raw = ""
         self.hoursTens = "0"
@@ -10,6 +15,7 @@ class AlarmclockModel:
         self.beepActive = False
         self.colonOn = False
 
+        # Mapping der 7-Segment-Bitmasken
         self.segMap = {
             "3f": "0",
             "06": "1",
@@ -24,19 +30,29 @@ class AlarmclockModel:
         }
 
     def setHexString(self, hexData: str):
+        """
+        Genau wie im Java-Code: 
+        - Byte 3 => hoursTens
+        - Byte 2 => hoursOnes
+        - Byte 1 => minutesTens
+        - Byte 0 => minutesOnes
+        - Flags: alarm=b2&0x80, beep=b0&0x80, colon=b1&0x80
+        """
         try:
             b3 = int(hexData[0:2], 16)
             b2 = int(hexData[2:4], 16)
             b1 = int(hexData[4:6], 16)
             b0 = int(hexData[6:8], 16)
-            self.hoursTens = self.decodeDigit(b3)
-            self.hoursOnes = self.decodeDigit(b2)
+
+            self.hoursTens   = self.decodeDigit(b3)
+            self.hoursOnes   = self.decodeDigit(b2)
             self.minutesTens = self.decodeDigit(b1)
             self.minutesOnes = self.decodeDigit(b0)
+
             self.alarmActive = (b2 & 0x80) != 0
             self.beepActive  = (b0 & 0x80) != 0
             self.colonOn     = (b1 & 0x80) != 0
-        except Exception as ex:
+        except Exception:
             self.clearProperties()
 
     def clearProperties(self):
@@ -49,6 +65,6 @@ class AlarmclockModel:
         self.colonOn = False
 
     def decodeDigit(self, b):
-        value = b & 0x7F  # Entferne das MSB
-        hexStr = f"{value:02x}".lower()
+        value = b & 0x7F  # Entferne Bit 7
+        hexStr = f"{value:02x}"
         return self.segMap.get(hexStr, "?")
