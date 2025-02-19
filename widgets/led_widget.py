@@ -12,7 +12,6 @@ class LEDWidget(QWidget):
         super().__init__(parent)
         self._isOn = False
         self._radius = radius
-        # Setze die Größe des Widgets (Durchmesser = 2 * Radius)
         self.setFixedSize(int(self._radius * 2), int(self._radius * 2))
 
     def setOn(self, state: bool):
@@ -32,27 +31,21 @@ class LEDWidget(QWidget):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
 
-        # Hintergrund löschen
         painter.eraseRect(self.rect())
 
-        # Außenlinie in Schwarz
         pen = QPen(Qt.black, 1)
         painter.setPen(pen)
 
-        # Füllfarbe: hellgrün (an) oder dunkelgrün (aus)
         if self._isOn:
             fillColor = QColor("green")
         else:
             fillColor = QColor("darkgreen")
         painter.setBrush(QBrush(fillColor))
 
-        # Zeichne den Kreis (Ellipse)
         painter.drawEllipse(0, 0, self.width(), self.height())
 
-        # Kleiner Glow-Effekt, wenn eingeschaltet
         if self._isOn:
-            # Zeichne einen etwas kleineren, halbtransparenten Kreis
-            glowColor = QColor(50, 255, 50, 128)  # (r, g, b, alpha)
+            glowColor = QColor(50, 255, 50, 128)  
             painter.setBrush(QBrush(glowColor))
             painter.setPen(Qt.NoPen)
             painter.drawEllipse(

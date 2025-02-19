@@ -1,10 +1,4 @@
-# models/alarmclock_model.py
-
 class AlarmclockModel:
-    """
-    Entspricht deinem Java-AlarmclockModel. 
-    Kein Signals/Slots – sondern reine Properties und 'setHexString(...)'.
-    """
     def __init__(self):
         self.raw = ""
         self.hoursTens = "0"
@@ -15,7 +9,6 @@ class AlarmclockModel:
         self.beepActive = False
         self.colonOn = False
 
-        # Mapping der 7-Segment-Bitmasken
         self.segMap = {
             "3f": "0",
             "06": "1",
@@ -31,7 +24,6 @@ class AlarmclockModel:
 
     def setHexString(self, hexData: str):
         """
-        Genau wie im Java-Code: 
         - Byte 3 => hoursTens
         - Byte 2 => hoursOnes
         - Byte 1 => minutesTens

@@ -1,9 +1,6 @@
-# models/io_model.py
 from PySide6.QtCore import QObject, Signal
 
 class IOModel(QObject):
-    # Signal: Wird ausgelöst, wenn sich der Zustand einer LED ändert.
-    # Parameter: Index der LED, neuer Zustand (bool)
     ledChanged = Signal(int, bool)
 
     NUM_LEDS = 8
@@ -24,11 +21,9 @@ class IOModel(QObject):
             new_state = ((val >> i) & 1) == 1
             if self.leds[i] != new_state:
                 self.leds[i] = new_state
-                # Signal aussenden, wenn sich der Zustand der LED i ändert
                 self.ledChanged.emit(i, new_state)
         print("LEDs:", format(val, "08b"))
 
-    # Die restlichen Methoden bleiben unverändert...
     def setSwitchesFromHex(self, hexVal: str):
         val = int(hexVal, 16)
         for i in range(IOModel.NUM_SWITCHES):

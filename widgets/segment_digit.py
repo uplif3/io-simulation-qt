@@ -33,7 +33,6 @@ class SegmentDigit(QWidget):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        # Segment-Logik
         segAOn = segBOn = segCOn = segDOn = segEOn = segFOn = segGOn = False
         d = self._digit
 
@@ -48,11 +47,9 @@ class SegmentDigit(QWidget):
         elif d == "8": segAOn=segBOn=segCOn=segDOn=segEOn=segFOn=segGOn=True
         elif d == "9": segAOn=segBOn=segCOn=segDOn=segFOn=segGOn=True
 
-        # Farben
         colorOn = QColor("red") 
         colorOff = QColor("gray")
 
-        # Koordinaten an Java-FXML anlehnen:
         # A = oben
         painter.fillRect(5, 0, 50, 8, colorOn if segAOn else colorOff)
         # B = oben rechts

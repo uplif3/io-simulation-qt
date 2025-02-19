@@ -5,32 +5,22 @@ from views.io_view import IOView
 
 class IOViewController(QObject):
     def __init__(self, view: IOView, model: IOModel, serialService=None, parent=None):
-        """
-        :param view: Die zugehörige UI (IOView)
-        :param model: Das Model, das den Zustand hält
-        :param serialService: Eine Referenz zum SerialService, um serielle Nachrichten zu versenden
-        """
         super().__init__(parent)
         self.view = view
         self.model = model
-        self.serialService = serialService  # Referenz auf den SerialService
+        self.serialService = serialService
         self.setupBindings()
 
     def setupBindings(self):
-        # Verbinde jeden Switch (CheckBox) mit dem Model und sende Statusänderungen
         for i, chk in enumerate(self.view.switches):
             chk.stateChanged.connect(lambda state, index=i: self.setSwitch(index, state))
-        # Verbinde die Buttons (hier erfolgt ein Umschalten beim Klick)
         for i, btn in enumerate(self.view.buttons):
             btn.clicked.connect(lambda checked, index=i: self.toggleButton(index))
-        # Verbinde die Slider
         self.view.slider0.valueChanged.connect(self.setScale0)
         self.view.slider1.valueChanged.connect(self.setScale1)
-        # Verbinde das neue Signal für Keybinds
         self.view.buttonKeyChanged.connect(self.setButtonKey)
 
     def setSwitch(self, index, state):
-        # In Qt entspricht Qt.Checked (in stateChanged) dem Wert 2
         self.model.switches[index] = (state == 2)
         self.sendSwitches()
 
@@ -47,9 +37,6 @@ class IOViewController(QObject):
         self.sendScale1()
 
     def setButtonKey(self, index, state):
-        """
-        Wird aufgerufen, wenn per Tastatur ein Button gedrückt oder losgelassen wird.
-        """
         self.model.buttons[index] = state
         self.sendButtons()
 
@@ -83,5 +70,4 @@ class IOViewController(QObject):
 
     def handleIncomingData(self, hexData: str):
         print("IOViewController received:", hexData)
-        # Update im Model anhand des Hex-Strings
         self.model.setLedsFromHex(hexData)

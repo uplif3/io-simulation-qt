@@ -5,14 +5,6 @@ from widgets.segment_digit import SegmentDigit
 from widgets.segment_colon import SegmentColon
 
 class AlarmclockView(QWidget):
-    """
-    Entspricht dem Java-FXML:
-    <VBox spacing="10" alignment="CENTER">
-      <Label text="Alarm Clock"/>
-      <HBox> [SegmentDigit, SegmentDigit, SegmentColon, SegmentDigit, SegmentDigit] </HBox>
-      <HBox> [alarmLabel, beepLabel] </HBox>
-    </VBox>
-    """
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi()
@@ -26,7 +18,6 @@ class AlarmclockView(QWidget):
         title.setStyleSheet("font-size: 24px; font-weight: bold;")
         mainLayout.addWidget(title)
 
-        # Digit-Zeile
         hboxDigits = QHBoxLayout()
         hboxDigits.setAlignment(Qt.AlignCenter)
         hboxDigits.setSpacing(10)
@@ -42,7 +33,6 @@ class AlarmclockView(QWidget):
         hboxDigits.addWidget(self.minutesOnes)
         mainLayout.addLayout(hboxDigits)
 
-        # Status-Zeile
         hboxStatus = QHBoxLayout()
         hboxStatus.setAlignment(Qt.AlignCenter)
         hboxStatus.setSpacing(20)
