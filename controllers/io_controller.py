@@ -26,6 +26,8 @@ class IOViewController(QObject):
         # Verbinde die Slider
         self.view.slider0.valueChanged.connect(self.setScale0)
         self.view.slider1.valueChanged.connect(self.setScale1)
+        # Verbinde das neue Signal für Keybinds
+        self.view.buttonKeyChanged.connect(self.setButtonKey)
 
     def setSwitch(self, index, state):
         # In Qt entspricht Qt.Checked (in stateChanged) dem Wert 2
@@ -43,6 +45,13 @@ class IOViewController(QObject):
     def setScale1(self, value):
         self.model.scale1 = value
         self.sendScale1()
+
+    def setButtonKey(self, index, state):
+        """
+        Wird aufgerufen, wenn per Tastatur ein Button gedrückt oder losgelassen wird.
+        """
+        self.model.buttons[index] = state
+        self.sendButtons()
 
     def sendSwitches(self):
         hexVal = self.model.getSwitchesAsHex()

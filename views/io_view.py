@@ -3,14 +3,20 @@ from PySide6.QtWidgets import (
     QWidget, QLabel, QGridLayout, QHBoxLayout,
     QCheckBox, QPushButton, QSlider
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal  # Signal importieren
 
 from widgets.led_widget import LEDWidget
 
 class IOView(QWidget):
+    # Neues Signal: Button-Index und Zustand (True: gedrückt, False: losgelassen)
+    buttonKeyChanged = Signal(int, bool)
+
     def __init__(self, parent=None):
         super().__init__(parent)
+        # Damit die Tastatureingaben auch ankommen:
+        self.setFocusPolicy(Qt.StrongFocus)
         self.setupUi()
+        self.setFocus()
 
     def setupUi(self):
         grid = QGridLayout(self)
@@ -95,7 +101,6 @@ class IOView(QWidget):
         Bindet das Model an die View, sodass Änderungen an den LEDs automatisch
         die LED-Widgets aktualisieren.
         """
-        # Verbinde das ledChanged-Signal des Models mit einem Slot in der View
         model.ledChanged.connect(self.updateLED)
 
     def updateLED(self, index, state):
@@ -104,3 +109,46 @@ class IOView(QWidget):
         """
         if 0 <= index < len(self.leds):
             self.leds[index].setOn(state)
+
+    # Überschreibe keyPressEvent und keyReleaseEvent
+    def keyPressEvent(self, event):
+        if event.isAutoRepeat():
+            return
+        key = event.key()
+        # Mapping: Taste 1 -> Button Index 3, 2 -> 2, 3 -> 1, 4 -> 0
+        if key == Qt.Key_1:
+            self.handleButtonKey(3, True)
+        elif key == Qt.Key_2:
+            self.handleButtonKey(2, True)
+        elif key == Qt.Key_3:
+            self.handleButtonKey(1, True)
+        elif key == Qt.Key_4:
+            self.handleButtonKey(0, True)
+        else:
+            super().keyPressEvent(event)
+
+    def keyReleaseEvent(self, event):
+        if event.isAutoRepeat():
+            return
+        key = event.key()
+        if key == Qt.Key_1:
+            self.handleButtonKey(3, False)
+        elif key == Qt.Key_2:
+            self.handleButtonKey(2, False)
+        elif key == Qt.Key_3:
+            self.handleButtonKey(1, False)
+        elif key == Qt.Key_4:
+            self.handleButtonKey(0, False)
+        else:
+            super().keyReleaseEvent(event)
+
+    def handleButtonKey(self, index, state: bool):
+        """
+        Aktualisiert visuell den Button-Zustand und gibt über ein Signal den
+        Zustand an den Controller weiter.
+        """
+        btn = self.buttons[index]
+        # Optional: visuelles Feedback geben, z. B. durch "setDown"
+        btn.setDown(state)
+        # Signal aussenden, damit der Controller den Model-Zustand setzen kann
+        self.buttonKeyChanged.emit(index, state)
