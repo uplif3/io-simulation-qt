@@ -19,6 +19,8 @@ class IOViewController(QObject):
         self.view.slider0.valueChanged.connect(self.setScale0)
         self.view.slider1.valueChanged.connect(self.setScale1)
         self.view.buttonKeyChanged.connect(self.setButtonKey)
+        self.view.slider0.valueChanged.connect(self.setScale0)
+        self.view.dial0Changed.connect(self.setScale0)
 
     def setSwitch(self, index, state):
         self.model.switches[index] = (state == 2)

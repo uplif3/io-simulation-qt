@@ -4,13 +4,6 @@ from PySide6.QtGui import QPainter, QColor
 from PySide6.QtCore import Qt
 
 class SegmentDigit(QWidget):
-    """
-    Entspricht deinem JavaFX SegmentDigit:
-    - Hat eine 'digit'-Property (String).
-    - Beim Setzen wird 'updateSegments(digit)' aufgerufen.
-    - Jedes Segment wird als Rechteck oder gezeichnetes Element realisiert.
-    Hier machen wir es minimal, du kannst es beliebig ausbauen.
-    """
     def __init__(self, parent=None):
         super().__init__(parent)
         self._digit = "0"
@@ -26,10 +19,6 @@ class SegmentDigit(QWidget):
     digit = property(getDigit, setDigit)
 
     def paintEvent(self, event):
-        """
-        Minimalbeispiel: Wir zeichnen 7 Rechtecke.
-        Basierend auf self._digit schalten wir die Segmente an/aus.
-        """
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 

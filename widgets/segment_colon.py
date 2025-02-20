@@ -4,11 +4,6 @@ from PySide6.QtGui import QPainter, QColor
 from PySide6.QtCore import Qt
 
 class SegmentColon(QWidget):
-    """
-    Entspricht deinem JavaFX SegmentColon:
-    - Hat eine boolesche Property 'isOn'.
-    - Zeichnet zwei Punkte (oben, unten) in grau oder weiß.
-    """
     def __init__(self, parent=None):
         super().__init__(parent)
         self._isOn = False

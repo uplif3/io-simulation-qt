@@ -5,19 +5,13 @@ from PySide6.QtCore import Qt
 
 class LEDWidget(QWidget):
     def __init__(self, radius=20, parent=None):
-        """
-        Erstellt ein rundes LED-Widget mit dem angegebenen Radius.
-        :param radius: Der Radius der LED in Pixeln.
-        """
+
         super().__init__(parent)
         self._isOn = False
         self._radius = radius
         self.setFixedSize(int(self._radius * 2), int(self._radius * 2))
 
     def setOn(self, state: bool):
-        """
-        Schaltet die LED an oder aus und zeichnet neu.
-        """
         self._isOn = state
         self.update()
 
@@ -25,9 +19,6 @@ class LEDWidget(QWidget):
         return self._isOn
 
     def paintEvent(self, event):
-        """
-        Zeichnet die LED als Kreis mit passender Farbe.
-        """
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing, True)
 

@@ -1,7 +1,7 @@
 # io_view.py
 from PySide6.QtWidgets import (
     QWidget, QLabel, QGridLayout, QHBoxLayout,
-    QCheckBox, QPushButton, QSlider
+    QCheckBox, QPushButton, QSlider, QDial
 )
 from PySide6.QtCore import Qt, Signal  
 
@@ -9,12 +9,12 @@ from widgets.led_widget import LEDWidget
 
 class IOView(QWidget):
     buttonKeyChanged = Signal(int, bool)
+    dial0Changed = Signal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFocusPolicy(Qt.StrongFocus)
         self.setupUi()
-        self.setFocus()
 
     def setupUi(self):
         grid = QGridLayout(self)
@@ -88,44 +88,24 @@ class IOView(QWidget):
         grid.addWidget(self.valueLabel1, 4, 2)
         self.slider1.valueChanged.connect(lambda value: self.valueLabel1.setText(str(value)))
 
+        label_dial0 = QLabel("Dial Scale0:")
+        grid.addWidget(label_dial0, 5, 0)
+        self.dial0 = QDial(self)
+        self.dial0.setMinimum(0)
+        self.dial0.setMaximum(1023)
+        self.dial0.setNotchesVisible(True)
+        grid.addWidget(self.dial0, 5, 1)
+        self.valueLabelDial0 = QLabel("0")
+        grid.addWidget(self.valueLabelDial0, 5, 2)
+        self.dial0.valueChanged.connect(self.onDial0ValueChanged)
+
+    def onDial0ValueChanged(self, value):
+        self.valueLabelDial0.setText(str(value))
+        self.dial0Changed.emit(value)
+
     def bindModel(self, model):
         model.ledChanged.connect(self.updateLED)
 
     def updateLED(self, index, state):
         if 0 <= index < len(self.leds):
             self.leds[index].setOn(state)
-
-    def keyPressEvent(self, event):
-        if event.isAutoRepeat():
-            return
-        key = event.key()
-        if key == Qt.Key_1:
-            self.handleButtonKey(3, True)
-        elif key == Qt.Key_2:
-            self.handleButtonKey(2, True)
-        elif key == Qt.Key_3:
-            self.handleButtonKey(1, True)
-        elif key == Qt.Key_4:
-            self.handleButtonKey(0, True)
-        else:
-            super().keyPressEvent(event)
-
-    def keyReleaseEvent(self, event):
-        if event.isAutoRepeat():
-            return
-        key = event.key()
-        if key == Qt.Key_1:
-            self.handleButtonKey(3, False)
-        elif key == Qt.Key_2:
-            self.handleButtonKey(2, False)
-        elif key == Qt.Key_3:
-            self.handleButtonKey(1, False)
-        elif key == Qt.Key_4:
-            self.handleButtonKey(0, False)
-        else:
-            super().keyReleaseEvent(event)
-
-    def handleButtonKey(self, index, state: bool):
-        btn = self.buttons[index]
-        btn.setDown(state)
-        self.buttonKeyChanged.emit(index, state)
